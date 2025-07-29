@@ -1,19 +1,21 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import LoginForm from "./LoginForm";
+import UploadModal from "./UploadModal";
 import { AuthContext } from "../context/authContext";
 import { useCookies } from "../hooks/useCookies";
 import { useAuth } from "../hooks/useAuth";
 
-const Layout = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+const Layout = ({ fetchData }: { fetchData: () => void }) => {
   const [loginOpen, setLoginOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const location = useLocation();
   const { token, setToken, isAdmin, setIsAdmin } = useContext(AuthContext);
   const { getItem } = useCookies();
   const { logout } = useAuth();
   const [username, setUsername] = useState<string | null>(null);
+
 
   useEffect(() => {
     const storedUsername = getItem("USERNAME");
@@ -26,21 +28,13 @@ const Layout = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const handleAddDropdownToggle = () => {
-    setDropdownOpen(!dropdownOpen);
-    setLoginOpen(false); // Close login dropdown when opening add dropdown
-    setLogoutOpen(false); // Close logout dropdown when opening add dropdown
-  };
-
   const handleLoginToggle = () => {
     setLoginOpen(!loginOpen);
-    setDropdownOpen(false); // Close add dropdown when opening login dropdown
     setLogoutOpen(false); // Close logout dropdown when opening login dropdown
   };
 
   const handleLogoutToggle = () => {
     setLogoutOpen(!logoutOpen);
-    setDropdownOpen(false); // Close add dropdown when opening logout dropdown
     setLoginOpen(false); // Close login dropdown when opening logout dropdown
   };
 
@@ -52,7 +46,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-black">
+    <div className="flex min-h-screen bg-black">
       {/* Left Navbar */}
       <div className="fixed left-0 top-0 h-screen w-18 bg-black flex flex-col items-center pt-24 text-white z-10">
         <Link 
@@ -104,11 +98,11 @@ const Layout = () => {
 
       {/* Top Right Buttons */}
       <div className="fixed top-4 right-4 z-50 flex items-center space-x-3">
-        {/* Add Button with Dropdown */}
-        <div className="relative">
+        {/* Add Button - Only visible to authenticated admins */}
+        {token && isAdmin && (
           <button
-            onClick={handleAddDropdownToggle}
-            className="flex items-center justify-center px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white transition-colors duration-200"
+            onClick={() => setUploadModalOpen(true)}
+            className="flex items-center justify-center px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white transition-colors duration-200 cursor-pointer"
             aria-label="Add"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,31 +110,7 @@ const Layout = () => {
             </svg>
             <span className="text-sm font-medium">Add</span>
           </button>
-          
-          {/* Dropdown Menu */}
-          {dropdownOpen && (
-            <div className="absolute top-full right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-xl border border-gray-600 z-50">
-              <button
-                onClick={() => {
-                  console.log('Add Video clicked');
-                  setDropdownOpen(false);
-                }}
-                className="w-full text-left px-4 py-3 text-white hover:bg-gray-700 transition-colors duration-200 rounded-t-lg"
-              >
-                Add Video
-              </button>
-              <button
-                onClick={() => {
-                  console.log('Add Image clicked');
-                  setDropdownOpen(false);
-                }}
-                className="w-full text-left px-4 py-3 text-white hover:bg-gray-700 transition-colors duration-200 rounded-b-lg"
-              >
-                Add Image
-              </button>
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Login/Logout Button */}
         <div className="relative">
@@ -149,7 +119,7 @@ const Layout = () => {
             <>
               <button
                 onClick={handleLogoutToggle}
-                className="flex items-center justify-center p-3 group transition-colors duration-200"
+                className="flex items-center justify-center p-3 group transition-colors duration-200 cursor-pointer"
                 aria-label="User menu"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} className="w-6 h-6 transition-colors duration-200 stroke-purple-400 group-hover:stroke-purple-300" stroke="currentColor">
@@ -179,7 +149,7 @@ const Layout = () => {
             <>
               <button
                 onClick={handleLoginToggle}
-                className="flex items-center justify-center p-3 group transition-colors duration-200"
+                className="flex items-center justify-center p-3 group transition-colors duration-200 cursor-pointer"
                 aria-label="Login"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} className="w-6 h-6 transition-colors duration-200 stroke-white group-hover:stroke-purple-400" stroke="currentColor">
@@ -198,9 +168,16 @@ const Layout = () => {
       </div>
 
       {/* Main Content Area - This is where routes will render */}
-      <div className='ml-18 mt-18 mr-4 bg-gray-900 h-[calc(100vh-4.5rem)] rounded-t-3xl flex-1 relative z-10 border border-gray-600' style={{ backgroundColor: '#0e0e0e' }}>
+      <div className='ml-18 mt-18 mr-4 bg-gray-900 min-h-[calc(100vh-4.5rem)] rounded-t-3xl flex-1 relative z-10 border border-gray-600' style={{ backgroundColor: '#0e0e0e' }}>
         <Outlet />
       </div>
+
+      {/* Upload Modal */}
+      <UploadModal 
+        isOpen={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+        fetchData={fetchData}
+      />
     </div>
   );
 }

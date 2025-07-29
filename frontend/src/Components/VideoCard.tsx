@@ -1,14 +1,11 @@
-import { Video } from "../types";
+import { MediaItem } from "../types";
 
 interface VideoCardProps {
-  video: {
-    id: number;
-    title: string;
-    description: string;
-    url: string;
-  };
-  onVideoClick: (video: VideoCardProps['video']) => void;
+  video: MediaItem;
+  onVideoClick: (video: MediaItem) => void;
 }
+
+const API_BASE_URL = import.meta.env.VITE_MEDIA_API_BASE_URL;
 
 const VideoCard = ({ video, onVideoClick }: VideoCardProps) => {
   return (
@@ -20,7 +17,7 @@ const VideoCard = ({ video, onVideoClick }: VideoCardProps) => {
       <div className="relative overflow-hidden rounded-t-lg">
         <video 
           className="w-full h-48 object-cover" 
-          src={video.url} 
+          src={`${API_BASE_URL}${video.url}`} 
           muted
           preload="metadata"
           poster=""
@@ -36,7 +33,7 @@ const VideoCard = ({ video, onVideoClick }: VideoCardProps) => {
       {/* Video Title */}
       <div className="p-3">
         <h3 className="text-white font-medium text-sm line-clamp-2">
-          {video.title}
+          {video.filename}
         </h3>
       </div>
     </div>

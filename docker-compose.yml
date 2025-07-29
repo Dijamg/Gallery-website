@@ -1,0 +1,51 @@
+version: '3.8'
+name: "media-app"
+
+services:
+  db:
+    image: postgres:15
+    container_name: media_db_cont
+    env_file:
+      - ./project.env
+    ports:
+      - "5432:5432"
+  flyway:
+    image: flyway/flyway:9.11.0-alpine
+    depends_on:
+      - db
+    volumes:
+      - ./flyway/sql:/flyway/sql
+    env_file:
+      - ./project.env
+    command: -connectRetries=60 -baselineOnMigrate=true migrate
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: frontend
+    restart: no
+    container_name: media_frontend_cont
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5174:5173"
+    env_file:
+      - project.env
+
+  backend:
+    build:
+      context: ./backend
+    container_name: media_backend_cont
+    env_file:
+      - ./project.env
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    volumes:
+      - ./uploads:/app/uploads
+
+volumes:
+  pgdata:

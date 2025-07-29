@@ -1,0 +1,20 @@
+CREATE TABLE media (
+    id SERIAL PRIMARY KEY,   
+    filename TEXT NOT NULL,
+    description TEXT NOT NULL,
+    filetype TEXT CHECK (filetype IN ('image', 'video')),
+    mime_type TEXT NOT NULL,
+    size BIGINT,
+    url TEXT NOT NULL,
+    views INT NOT NULL DEFAULT 0,
+    uploaded_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    uploaded_by VARCHAR(100) NOT NULL,
+    revision_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    media_id INT REFERENCES media(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+)

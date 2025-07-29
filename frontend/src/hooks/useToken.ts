@@ -22,14 +22,14 @@ export const useToken = () => {
 
     const removeIsAdmin = () => {
         setIsAdmin(false);
-        removeItem("IS_ADMIN")
+        removeItem("IS_ADMIN");
     }
 
     const removeToken = () => {
         setToken(null);
         removeItem("TOKEN");
-        removeItem("USERNAME")
-        removeItem("IS_ADMIN")
+        removeItem("USERNAME");
+        removeItem("IS_ADMIN");
     };
 
     return { contextToken, addToken, addUsername, addIsAdmin, removeToken, setToken, removeIsAdmin };

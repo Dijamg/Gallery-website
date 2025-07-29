@@ -1,8 +1,17 @@
-export type Video = {
+export type MediaItem = {
     id: number;
-    title: string;
-    description: string;
+    filename: string;
+    filetype: 'video' | 'image';
+    mime_type: string;
+    size: number;
     url: string;
-    createdAt: string;
-    updatedAt: string;
+    uploaded_by: string;
+    description: string;
+}
+
+export type Comment = {
+    id: number;
+    mediaId: number;
+    content: string;
+    created_at: string;
 }
