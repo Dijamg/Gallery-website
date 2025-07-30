@@ -11,7 +11,7 @@ const getAll = async (): Promise<Comment[]> => {
 
 const addComment = async (id: number, formData: FormData): Promise<void> => {
   try {
-   const response = await axios.post(`${API_URL}${id}/upload-comment`, formData, {
+   const response = await axios.post(`${API_URL}/${id}/upload-comment`, formData, {
        headers: {
        ...authHeader(),
        'Content-Type': 'multipart/form-data'
@@ -25,7 +25,7 @@ const addComment = async (id: number, formData: FormData): Promise<void> => {
  };
  
  const deleteComment = async (id: number): Promise<void> => {
-   await axios.delete(`${API_URL}comments/${id}/delete`, { headers: authHeader() });
+   await axios.delete(`${API_URL}/${id}/delete`, { headers: authHeader() });
  };
 
 
