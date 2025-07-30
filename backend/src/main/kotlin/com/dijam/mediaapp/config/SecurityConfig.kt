@@ -33,8 +33,8 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/assets/**").permitAll()
-                    .requestMatchers("/authentication/pingadmin", "/api/media/upload", "/api/media/*/delete").hasRole("ADMIN")
-                    .requestMatchers("/authentication/pingauth").authenticated()
+                    .requestMatchers("/authentication/pingadmin", "/api/media/upload", "/api/media/*/delete", "/api/media/comments/*/delete").hasRole("ADMIN")
+                    .requestMatchers("/authentication/pingauth", "/api/media/*/upload-comment").authenticated()
                     .anyRequest().permitAll()
             }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
@@ -47,7 +47,7 @@ class SecurityConfig(
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf("http://localhost:5174")
         configuration.allowCredentials = true
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("Authorization", "Content-Type")
 
         val source = UrlBasedCorsConfigurationSource()

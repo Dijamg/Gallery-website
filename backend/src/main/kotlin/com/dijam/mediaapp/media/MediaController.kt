@@ -12,9 +12,12 @@ import java.time.Instant
 import java.nio.file.Paths
 import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
+
+data class ErrorResponse(val error: String)
 
 @RestController
 @RequestMapping("/api/media")
@@ -62,6 +65,46 @@ open class MediaController(
             ResponseEntity.status(500).body(emptyList())
         }
     }
+
+    @PatchMapping("/{id}/increment-views")
+    fun incrementViews(@PathVariable id: Long): ResponseEntity<Void> {
+        service.incrementViews(id)
+        return ResponseEntity.ok().build()
+    }
+
+
+    @PostMapping("/{id}/upload-comment", consumes = ["multipart/form-data"])
+    open fun uploadComment(
+        @PathVariable id: Long,
+        @RequestParam("content") content: String
+    ): ResponseEntity<Any> {
+        return try {
+            val comment = Comment(
+                mediaId = id,
+                content = content
+            )
+            service.addComment(comment)
+            ResponseEntity.status(200).body(comment)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.status(400)
+                .body(ErrorResponse("Comment rejected: ${e.message}"))
+        } catch (e: Exception) {
+            println("THE ERROR: " + e.message)
+            ResponseEntity.status(500)
+                .body(ErrorResponse("Internal server error"))
+        }
+    }
+
+    @DeleteMapping("/comments/{id}/delete")
+    fun deleteComment(@PathVariable id: Long): ResponseEntity<Any> {
+        val comment = mediaService.getCommentById(id) ?: return ResponseEntity.notFound().build()
+
+        // Delete from database
+        mediaService.deleteComment(id)
+
+        return ResponseEntity.noContent().build()
+    }
+
 
     @PostMapping("/upload", consumes = ["multipart/form-data"])
     fun uploadMedia(

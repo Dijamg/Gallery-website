@@ -41,8 +41,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Layout fetchData={fetchData} />}>
             <Route index element={<Navigate to="/videos" replace />} />
-            <Route path="videos" element={<VideosPage videos={videos} comments={comments} fetchData={fetchData} />} />
-            <Route path="images" element={<ImagesPage images={images} comments={comments} fetchData={fetchData} />} />
+            <Route path="videos" element={<VideosPage videos={videos} setVideos={setVideos} comments={comments} fetchData={fetchData} />} />
+            <Route path="images" element={<ImagesPage images={images} setImages={setImages} comments={comments} fetchData={fetchData} />} />
             <Route path="other" element={<OtherPage />} />
           </Route>
         </Routes>

@@ -7,6 +7,8 @@ export type MediaItem = {
     url: string;
     uploaded_by: string;
     description: string;
+    views: number;
+    uploaded_at: string;
 }
 
 export type Comment = {

@@ -7,9 +7,10 @@ interface ImagesPageProps {
   images: MediaItem[];
   comments: Comment[];
   fetchData: () => void;
+  setImages: React.Dispatch<React.SetStateAction<MediaItem[]>>;
 }
 
-const ImagesPage = ({ images, comments, fetchData }: ImagesPageProps) => {
+const ImagesPage = ({ images, comments, fetchData, setImages }: ImagesPageProps) => {
   const [selectedImage, setSelectedImage] = useState<MediaItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,6 +26,16 @@ const ImagesPage = ({ images, comments, fetchData }: ImagesPageProps) => {
     setIsModalOpen(false);
     setSelectedImage(null);
   };
+
+  // Update selectedImage when images state changes
+  React.useEffect(() => {
+    if (selectedImage) {
+      const updatedImage = images.find(i => i.id === selectedImage.id);
+      if (updatedImage) {
+        setSelectedImage(updatedImage);
+      }
+    }
+  }, [images, selectedImage]);
 
   const imageItems = images.filter(item => item.filetype === 'image');
 
@@ -47,6 +58,8 @@ const ImagesPage = ({ images, comments, fetchData }: ImagesPageProps) => {
         image={selectedImage}
         comments={comments}
         onDelete={fetchData}
+        onCommentAdded={fetchData}
+        setImages={setImages}
       />
     </div>
   );

@@ -55,17 +55,12 @@ class JwtAuthenticationProvider(
     }
 
     private fun validateWithTpxBackend(token: String): Boolean {
-        println("HELLOOOOO")
-        println(token)
         return try {
-            println("aaaaaaaaaaaaaaaaaa")
             val headers = HttpHeaders()
             headers.contentType = MediaType.APPLICATION_JSON
             headers.setBearerAuth(token)
-            println("bbbbbbbbbbbbbbbbbbbbbbb")
 
             val entity = HttpEntity<Void>(headers)
-            println("cccccccccccccccccccccccc")
 
             val response = restTemplate.postForEntity(
                 verifyTokenUrl,
@@ -73,11 +68,10 @@ class JwtAuthenticationProvider(
                 Map::class.java
             )
 
-            println("response is ${response.body}")
 
             response.statusCode == HttpStatus.OK && response.body?.get("message") == "Token verified"
         } catch (ex: Exception) {
-            println("WHAT FUCKING ERROR IS HAPPENING?????? ${ex.message}")
+            println("Error ${ex.message}")
             false
         }
     }

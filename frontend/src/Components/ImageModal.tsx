@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Comment } from '../types';
 import { MediaItem } from '../types';
 import mediaService from '../Services/mediaService';
@@ -10,14 +10,73 @@ interface ImageModalProps {
   image: MediaItem | null;
   comments: Comment[];
   onDelete?: () => void; // Callback to refresh the media list after deletion
+  onCommentAdded?: () => void; // Callback to refresh data after comment addition
+  setImages?: React.Dispatch<React.SetStateAction<MediaItem[]>>; // To update view count immediately
 }
 
 const API_BASE_URL = import.meta.env.VITE_MEDIA_API_BASE_URL;
 
-const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comments, onDelete }) => {
+const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comments, onDelete, onCommentAdded, setImages }) => {
   const [showComments, setShowComments] = useState(false);
+  const [showAddComment, setShowAddComment] = useState(false);
+  const [newComment, setNewComment] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [commentError, setCommentError] = useState('');
+  const [deletingCommentId, setDeletingCommentId] = useState<number | null>(null);
+  const hasIncrementedView = useRef(false);
   const { token, isAdmin } = useContext(AuthContext);
+  
+  // Reset the increment flag when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      hasIncrementedView.current = false;
+    }
+  }, [isOpen]);
+  
+  // Increment view count when modal opens
+  useEffect(() => {
+    if (isOpen && image && !hasIncrementedView.current) {
+      hasIncrementedView.current = true;
+      
+      // Update view count immediately in state
+      if (setImages) {
+        setImages(prevImages => 
+          prevImages.map(img => 
+            img.id === image.id 
+              ? { ...img, views: (img.views || 0) + 1 }
+              : img
+          )
+        );
+      }
+      
+      // Call API to persist the increment
+      mediaService.incrementViewCount(image.id).catch(error => {
+        console.error('Error incrementing view count:', error);
+      });
+    }
+  }, [isOpen, image, setImages]);
+  
+  // Format upload time
+  const formatUploadTime = (uploadedAt: string) => {
+    const uploadDate = new Date(uploadedAt);
+    const now = new Date();
+    const diffInMs = now.getTime() - uploadDate.getTime();
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+    const diffInDays = diffInHours / 24;
+    
+    if (diffInDays < 1) {
+      const hours = Math.floor(diffInHours);
+      const minutes = Math.floor((diffInHours - hours) * 60);
+      if (hours === 0) {
+        return `Uploaded ${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+      }
+      return `Uploaded ${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    } else {
+      const days = Math.floor(diffInDays);
+      return `Uploaded ${days} day${days !== 1 ? 's' : ''} ago`;
+    }
+  };
   
   if (!isOpen || !image) return null;
 
@@ -32,6 +91,53 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comment
 
   const handleCommentsClick = () => {
     setShowComments(!showComments);
+  };
+
+  const handleAddCommentClick = () => {
+    setShowAddComment(!showAddComment);
+    if (showAddComment) {
+      // When closing, clear error and comment
+      setCommentError('');
+      setNewComment('');
+    }
+  };
+
+  const handleSubmitComment = async () => {
+    if (newComment.trim()) {
+      try {
+        setIsSubmittingComment(true);
+        setCommentError('');
+        const formData = new FormData();
+        formData.append('content', newComment.trim());
+        
+        await mediaService.addComment(image.id, formData);
+        console.log('Comment added successfully');
+        setNewComment('');
+        setShowAddComment(false);
+        setCommentError('');
+        if(onDelete) {
+          onDelete();
+        }
+        if(onCommentAdded) {
+          onCommentAdded();
+        }
+      } catch (error: any) {
+        console.error('Error adding comment:', error);
+        if (error.response?.status === 400) {
+          setCommentError('Use appropriate language');
+        } else {
+          setCommentError(error.response?.data?.message || 'Failed to add comment. Please try again.');
+        }
+      } finally {
+        setIsSubmittingComment(false);
+      }
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubmitComment();
+    }
   };
 
   const handleDelete = async () => {
@@ -52,6 +158,26 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comment
         alert('Failed to delete image. Please try again.');
       } finally {
         setIsDeleting(false);
+      }
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    const confirmed = window.confirm('Are you sure you want to delete this comment?');
+    
+    if (confirmed) {
+      try {
+        setDeletingCommentId(commentId);
+        await mediaService.deleteComment(commentId);
+        console.log('Comment deleted successfully');
+        if (onCommentAdded) {
+          onCommentAdded();
+        }
+      } catch (error) {
+        console.error('Error deleting comment:', error);
+        alert('Failed to delete comment. Please try again.');
+      } finally {
+        setDeletingCommentId(null);
       }
     }
   };
@@ -110,9 +236,9 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comment
               </p>
               {/* Additional content can be added here */}
               <div className="flex items-center space-x-4 text-gray-400 text-xs">
-                <span>Uploaded 2 days ago</span>
+                <span>{formatUploadTime(image.uploaded_at)}</span>
                 <span>•</span>
-                <span>0 views</span>
+                <span>{image.views || 0} views</span>
                 <span>•</span>
                 <span 
                   className="text-white hover:text-gray-600 cursor-pointer transition-colors duration-200"
@@ -120,7 +246,45 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comment
                 >
                   {imageComments.length} comments
                 </span>
+                {token && (
+                  <button
+                    onClick={handleAddCommentClick}
+                    className={`cursor-pointer transition-colors duration-200 text-xs ${
+                      showAddComment 
+                        ? "text-red-400 hover:text-red-300" 
+                        : "text-blue-400 hover:text-blue-300"
+                    }`}
+                  >
+                    {showAddComment ? "- close" : "+ add comment"}
+                  </button>
+                )}
               </div>
+
+              {/* Add Comment Section */}
+              {showAddComment && (
+                <div className="mt-4 p-3 bg-gray-900 rounded-lg">
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Write a comment..."
+                      className="flex-1 bg-gray-800 text-white text-sm rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={handleSubmitComment}
+                      disabled={isSubmittingComment}
+                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmittingComment ? 'Adding...' : 'Enter'}
+                    </button>
+                  </div>
+                  {commentError && (
+                    <p className="text-red-500 text-xs mt-2">{commentError}</p>
+                  )}
+                </div>
+              )}
 
               {/* Comments Section */}
               {showComments && (
@@ -133,6 +297,16 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comment
                           <span className="text-gray-500 text-xs">
                             {new Date(comment.created_at).toLocaleDateString()}
                           </span>
+                          {token && isAdmin && (
+                            <button
+                              onClick={() => handleDeleteComment(comment.id)}
+                              disabled={deletingCommentId === comment.id}
+                              className="text-red-500 hover:text-red-300 text-xs ml-2"
+                              title="Delete comment"
+                            >
+                              {deletingCommentId === comment.id ? 'Deleting...' : 'X'}
+                            </button>
+                          )}
                         </div>
                         <p className="text-gray-300 text-sm">{comment.content}</p>
                       </div>

@@ -7,9 +7,10 @@ interface VideosPageProps {
   videos: MediaItem[];
   comments: Comment[];
   fetchData: () => void;
+  setVideos: React.Dispatch<React.SetStateAction<MediaItem[]>>;
 }
 
-const VideosPage = ({ videos, comments, fetchData }: VideosPageProps) => {
+const VideosPage = ({ videos, comments, fetchData, setVideos }: VideosPageProps) => {
   const [selectedVideo, setSelectedVideo] = useState<MediaItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,6 +26,16 @@ const VideosPage = ({ videos, comments, fetchData }: VideosPageProps) => {
     setIsModalOpen(false);
     setSelectedVideo(null);
   };
+
+  // Update selectedVideo when videos state changes
+  React.useEffect(() => {
+    if (selectedVideo) {
+      const updatedVideo = videos.find(v => v.id === selectedVideo.id);
+      if (updatedVideo) {
+        setSelectedVideo(updatedVideo);
+      }
+    }
+  }, [videos, selectedVideo]);
 
   // Filter videos only
   const videoItems = videos.filter(item => item.filetype === 'video');
@@ -48,6 +59,8 @@ const VideosPage = ({ videos, comments, fetchData }: VideosPageProps) => {
         video={selectedVideo}
         comments={comments}
         onDelete={fetchData}
+        onCommentAdded={fetchData}
+        setVideos={setVideos}
       />
     </div>
   );
