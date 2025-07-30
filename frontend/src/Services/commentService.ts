@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Comment } from '../types';
 import authHeader from './auth-headers';
 
-const API_URL = `${import.meta.env.VITE_MEDIA_BACKEND_BASE_URL}/media/comments`;
+const API_URL = `${import.meta.env.VITE_MEDIA_BACKEND_BASE_URL}/media`;
 
 const getAll = async (): Promise<Comment[]> => {
   const response = await axios.get<Comment[]>(API_URL);
@@ -25,7 +25,7 @@ const addComment = async (id: number, formData: FormData): Promise<void> => {
  };
  
  const deleteComment = async (id: number): Promise<void> => {
-   await axios.delete(`${API_URL}/${id}/delete`, { headers: authHeader() });
+   await axios.delete(`${API_URL}/comments/${id}/delete`, { headers: authHeader() });
  };
 
 
