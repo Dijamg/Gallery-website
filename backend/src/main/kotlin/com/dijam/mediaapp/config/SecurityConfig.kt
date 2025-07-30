@@ -32,9 +32,9 @@ class SecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/assets/**").permitAll()
-                    .requestMatchers("/authentication/pingadmin", "/media/upload", "/media/*/delete", "/media/comments/*/delete").hasRole("ADMIN")
-                    .requestMatchers("/authentication/pingauth", "/media/*/upload-comment").authenticated()
+                    .requestMatchers("/gallery/assets/**").permitAll()
+                    .requestMatchers("/gallery/api/authentication/pingadmin", "/gallery/api/media/upload", "/gallery/api/media/*/delete", "/gallery/api/media/comments/*/delete").hasRole("ADMIN")
+                    .requestMatchers("/gallery/api/authentication/pingauth", "/gallery/api/media/*/upload-comment").authenticated()
                     .anyRequest().permitAll()
             }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
@@ -45,7 +45,7 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:5174")
+        configuration.allowedOrigins = listOf("https://phantomphoenix.org","http://localhost:5174")
         configuration.allowCredentials = true
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("Authorization", "Content-Type")

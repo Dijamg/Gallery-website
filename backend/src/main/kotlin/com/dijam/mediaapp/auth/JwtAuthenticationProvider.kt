@@ -24,6 +24,8 @@ class JwtAuthenticationProvider(
         val token = authentication.credentials as? String
             ?: throw BadCredentialsException("Missing token")
 
+        println("Verifying the following toke: $token")
+        println("Calling the following endpoint: $verifyTokenUrl")
         if (!validateWithTpxBackend(token)) {
             throw BadCredentialsException("Token invalid or user deleted")
         }
