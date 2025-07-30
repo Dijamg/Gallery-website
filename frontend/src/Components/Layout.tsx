@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import LoginForm from "./LoginForm";
 import UploadModal from "./UploadModal";
+import Footer from "./Footer";
 import { AuthContext } from "../context/authContext";
 import { useCookies } from "../hooks/useCookies";
 import { useAuth } from "../hooks/useAuth";
@@ -46,7 +47,7 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-black">
+    <div className="flex min-h-screen bg-black flex-col">
       {/* Left Navbar */}
       <div className="fixed left-0 top-0 h-screen w-18 bg-black flex flex-col items-center pt-24 text-white z-10">
         <Link 
@@ -166,20 +167,25 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 15l3-3m0 0l-3-3m3 3H9" />
                 </svg>
               </button>
-               
-               <LoginForm 
-                 isOpen={loginOpen}
-                 onClose={() => setLoginOpen(false)}
-                 onLoginSuccess={(username: string) => setUsername(username)}
-               />
+              
+              <LoginForm 
+                isOpen={loginOpen}
+                onClose={() => setLoginOpen(false)}
+                onLoginSuccess={(username: string) => setUsername(username)}
+              />
             </>
           )}
         </div>
       </div>
 
       {/* Main Content Area - This is where routes will render */}
-      <div className='ml-18 mt-18 mr-4 bg-gray-900 min-h-[calc(100vh-4.5rem)] rounded-t-3xl flex-1 relative z-10 border border-gray-600' style={{ backgroundColor: '#0e0e0e' }}>
-        <Outlet />
+      <div className='ml-18 mt-18 mr-4 bg-gray-900 min-h-[calc(100vh-4.5rem)] rounded-t-3xl flex-1 relative z-10 border border-gray-600 flex flex-col' style={{ backgroundColor: '#0e0e0e' }}>
+        <div className="flex-1">
+          <Outlet />
+        </div>
+        
+        {/* Footer */}
+        <Footer />
       </div>
 
       {/* Upload Modal */}
