@@ -22,7 +22,11 @@ export const useCookies = () => {
     };
 
     const removeItem = (key: string) => {
-        cookies.remove(key, { path: '/' });
+        // Get the current path to determine cookie path
+        const currentPath = window.location.pathname;
+        const cookiePath = currentPath.startsWith('/gallery') ? '/gallery' : '/';
+        
+        cookies.remove(key, { path: cookiePath });
         setValue(null);
     };
 

@@ -12,20 +12,18 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const location = useLocation();
-  const { token, setToken, isAdmin, setIsAdmin } = useContext(AuthContext);
+  const { isAdmin } = useContext(AuthContext);
   const { getItem } = useCookies();
-  const { logout } = useAuth();
+  const { token, logout } = useAuth();
   const [username, setUsername] = useState<string | null>(null);
 
 
   useEffect(() => {
-    const storedUsername = getItem("USERNAME");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    } else {
-      setUsername(null);
+    const username = getItem("USERNAME");
+    if (username) {
+      setUsername(username);
     }
-  }, [token, getItem]);
+  }, []);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -41,7 +39,6 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
 
   const handleLogout = () => {
     logout();
-    setUsername(null);
     setLogoutOpen(false);
     setTimeout(() => window.location.reload(), 100);
   };
