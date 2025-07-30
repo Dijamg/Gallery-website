@@ -2,7 +2,7 @@ import axios from 'axios';
 import { MediaItem } from '../types';
 import authHeader from './auth-headers';
 
-const API_URL = 'http://localhost:8081/api/media/';
+const API_URL = `${import.meta.env.VITE_MEDIA_API_BASE_URL}/media/`;
 
 const getAll = async (): Promise<MediaItem[]> => {
   const response = await axios.get<MediaItem[]>(API_URL);

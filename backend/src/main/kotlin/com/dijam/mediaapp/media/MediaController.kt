@@ -20,7 +20,7 @@ import java.io.IOException
 data class ErrorResponse(val error: String)
 
 @RestController
-@RequestMapping("/api/media")
+@RequestMapping("/media")
 open class MediaController(
     private val service: MediaService,
     private val mediaService: MediaService,

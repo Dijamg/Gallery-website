@@ -33,8 +33,8 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/assets/**").permitAll()
-                    .requestMatchers("/authentication/pingadmin", "/api/media/upload", "/api/media/*/delete", "/api/media/comments/*/delete").hasRole("ADMIN")
-                    .requestMatchers("/authentication/pingauth", "/api/media/*/upload-comment").authenticated()
+                    .requestMatchers("/authentication/pingadmin", "/media/upload", "/media/*/delete", "/media/comments/*/delete").hasRole("ADMIN")
+                    .requestMatchers("/authentication/pingauth", "/media/*/upload-comment").authenticated()
                     .anyRequest().permitAll()
             }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
