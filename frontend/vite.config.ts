@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  base: '/media/',
+  base: '/gallery/',
   server: {
     watch: {
       usePolling: true,

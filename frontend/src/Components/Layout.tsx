@@ -84,6 +84,16 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
           </svg>
           <span className="text-xs">Other</span>
         </Link>
+        
+        <a 
+          href="/" 
+          className="mb-10 cursor-pointer flex flex-col items-center transition-colors duration-200 text-white hover:text-purple-400"
+        >
+          <svg className="w-6 h-6 mb-2" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          <span className="text-xs">TPX Site</span>
+        </a>
       </div>
 
       {/* Top Right Logo and Title */}
@@ -156,12 +166,12 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 15l3-3m0 0l-3-3m3 3H9" />
                 </svg>
               </button>
-              
-              <LoginForm 
-                isOpen={loginOpen}
-                onClose={() => setLoginOpen(false)}
-                onLoginSuccess={(username: string) => setUsername(username)}
-              />
+               
+               <LoginForm 
+                 isOpen={loginOpen}
+                 onClose={() => setLoginOpen(false)}
+                 onLoginSuccess={(username: string) => setUsername(username)}
+               />
             </>
           )}
         </div>

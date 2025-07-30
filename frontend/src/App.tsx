@@ -37,7 +37,7 @@ const App = () => {
   return (
 
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/gallery">
         <Routes>
           <Route path="/" element={<Layout fetchData={fetchData} />}>
             <Route index element={<Navigate to="/videos" replace />} />

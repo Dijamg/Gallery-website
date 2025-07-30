@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Comment } from '../types';
 import { MediaItem } from '../types';
 import mediaService from '../Services/mediaService';
+import commentService from '../Services/commentService';
 import { AuthContext } from '../context/authContext';
 
 interface VideoModalProps {
@@ -110,7 +111,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
         const formData = new FormData();
         formData.append('content', newComment.trim());
         
-        await mediaService.addComment(video.id, formData);
+        await commentService.addComment(video.id, formData);
         console.log('Comment added successfully');
         setNewComment('');
         setShowAddComment(false);
@@ -168,7 +169,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
     if (confirmed) {
       try {
         setDeletingCommentId(commentId);
-        await mediaService.deleteComment(commentId);
+        await commentService.deleteComment(commentId);
         console.log('Comment deleted successfully');
         if (onCommentAdded) {
           onCommentAdded();

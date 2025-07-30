@@ -46,7 +46,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ isOpen, onClose, onLoginSuccess }
 
   return (
     <div className="absolute top-full right-0 mt-2 w-64 bg-gray-800 rounded-lg shadow-xl border border-gray-600 z-50 p-4">
-      <h3 className="text-white font-semibold mb-4">Login</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-white font-semibold">Login</h3>
+        <a
+          href="/register"
+          className="text-purple-400 hover:text-purple-300 text-sm transition-colors duration-200"
+        >
+          Register here!
+        </a>
+      </div>
       
       {error && (
         <div className="mb-3 p-2 bg-red-600 text-white text-sm rounded">

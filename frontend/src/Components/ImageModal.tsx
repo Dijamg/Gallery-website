@@ -3,6 +3,7 @@ import { Comment } from '../types';
 import { MediaItem } from '../types';
 import mediaService from '../Services/mediaService';
 import { AuthContext } from '../context/authContext';
+import commentService from '../Services/commentService';
 
 interface ImageModalProps {
   isOpen: boolean;
@@ -110,7 +111,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comment
         const formData = new FormData();
         formData.append('content', newComment.trim());
         
-        await mediaService.addComment(image.id, formData);
+        await commentService.addComment(image.id, formData);
         console.log('Comment added successfully');
         setNewComment('');
         setShowAddComment(false);
@@ -168,7 +169,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comment
     if (confirmed) {
       try {
         setDeletingCommentId(commentId);
-        await mediaService.deleteComment(commentId);
+        await commentService.deleteComment(commentId);
         console.log('Comment deleted successfully');
         if (onCommentAdded) {
           onCommentAdded();
