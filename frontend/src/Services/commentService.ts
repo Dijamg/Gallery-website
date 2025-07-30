@@ -5,7 +5,7 @@ import authHeader from './auth-headers';
 const API_URL = `${import.meta.env.VITE_MEDIA_BACKEND_BASE_URL}/media`;
 
 const getAll = async (): Promise<Comment[]> => {
-  const response = await axios.get<Comment[]>(API_URL);
+  const response = await axios.get<Comment[]>(`${API_URL}/comments`);
   return response.data;
 };
 
