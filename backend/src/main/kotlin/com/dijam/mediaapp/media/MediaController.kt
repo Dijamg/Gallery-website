@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
+import java.util.UUID
 
 data class ErrorResponse(val error: String)
 
@@ -137,7 +138,10 @@ open class MediaController(
             val uploadDir = Paths.get("/app/uploads")
             Files.createDirectories(uploadDir)
 
-            val filename = StringUtils.cleanPath(file.originalFilename ?: "upload")
+            val fileExtension = "." + file.originalFilename?.substringAfterLast('.', "")
+            val uniqueFileName = "${UUID.randomUUID()}$fileExtension"
+
+            val filename = StringUtils.cleanPath(uniqueFileName)
             val filePath = uploadDir.resolve(filename)
             println("Uploading to: $filePath")
             file.transferTo(filePath)
