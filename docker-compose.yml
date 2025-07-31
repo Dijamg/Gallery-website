@@ -1,3 +1,5 @@
+# This is only for the development environment, for production, we use the docker-compose-prod.yml file of tpx-remaster project
+
 version: '3.8'
 name: "media-app"
 
