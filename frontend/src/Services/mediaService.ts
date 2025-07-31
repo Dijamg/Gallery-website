@@ -10,7 +10,6 @@ const getAll = async (): Promise<MediaItem[]> => {
 };
 
 const getVideos = async (): Promise<MediaItem[]> => {
-  console.log("GETTING VIDEOS FROM ", API_URL + "videos");
   const response = await axios.get<MediaItem[]>(`${API_URL}videos`);
   return response.data;
 };
@@ -22,7 +21,6 @@ const getImages = async (): Promise<MediaItem[]> => {
 
 const addMedia = async (formData: FormData): Promise<MediaItem> => {
   try {
-    console.log(authHeader());
     const response = await axios.post<MediaItem>(`${API_URL}upload`, formData, { 
       headers: {
         ...authHeader(),

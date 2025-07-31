@@ -15,7 +15,7 @@ class MediaService(
     fun getById(id: Long): Media? = mediaRepository.findById(id).orElse(null)
 
     fun getByFileType(fileType: FileType): List<Media> =
-        mediaRepository.findAllByFiletype(fileType)
+        mediaRepository.findAllByFiletypeOrderByIdAsc(fileType)
 
     fun addMedia(media: Media): Media = mediaRepository.save(media)
 

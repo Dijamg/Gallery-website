@@ -3,7 +3,7 @@ package com.dijam.mediaapp.media
 import org.springframework.data.repository.CrudRepository
 
 interface MediaRepository : CrudRepository<Media, Long> {
-    fun findAllByFiletype(fileType: FileType): List<Media>
+    fun findAllByFiletypeOrderByIdAsc(fileType: FileType): List<Media>
     override fun findAll(): List<Media>
 }
 

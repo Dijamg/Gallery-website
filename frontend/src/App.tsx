@@ -19,12 +19,10 @@ const App = () => {
 
   const fetchData = async () => {
     try {
-      console.log("hellooo");
       const [videos, images, comments] = await Promise.all([mediaService.getVideos(), mediaService.getImages(), commentService.getAll()]);
       setVideos(videos);
       setImages(images);
       setComments(comments);
-      console.log(comments);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
