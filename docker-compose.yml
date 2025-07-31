@@ -1,4 +1,4 @@
-# This is only for the development environment, for production, we use the docker-compose-prod.yml file of tpx-remaster project
+# This is only for the development environment, for production, we use the docker-compose-prod.yml file of TPX-Discord-Website https://github.com/Dijamg/TPX-Discord-website/tree/main/backend
 
 version: '3.8'
 name: "media-app"

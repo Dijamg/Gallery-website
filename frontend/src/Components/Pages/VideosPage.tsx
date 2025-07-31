@@ -8,9 +8,10 @@ interface VideosPageProps {
   comments: Comment[];
   fetchData: () => void;
   setVideos: React.Dispatch<React.SetStateAction<MediaItem[]>>;
+  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
 }
 
-const VideosPage = ({ videos, comments, fetchData, setVideos }: VideosPageProps) => {
+const VideosPage = ({ videos, comments, fetchData, setVideos, setComments }: VideosPageProps) => {
   const [selectedVideo, setSelectedVideo] = useState<MediaItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -168,6 +169,7 @@ const VideosPage = ({ videos, comments, fetchData, setVideos }: VideosPageProps)
         onDelete={fetchData}
         onCommentAdded={fetchData}
         setVideos={setVideos}
+        setComments={setComments}
       />
     </div>
   );

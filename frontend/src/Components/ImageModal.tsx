@@ -13,11 +13,12 @@ interface ImageModalProps {
   onDelete?: () => void; // Callback to refresh the media list after deletion
   onCommentAdded?: () => void; // Callback to refresh data after comment addition
   setImages?: React.Dispatch<React.SetStateAction<MediaItem[]>>; // To update view count immediately
+  setComments?: React.Dispatch<React.SetStateAction<Comment[]>>; // To update comment section on each modal open
 }
 
 const API_BASE_URL = import.meta.env.VITE_MEDIA_API_BASE_URL;
 
-const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comments, onDelete, onCommentAdded, setImages }) => {
+const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comments, onDelete, onCommentAdded, setImages, setComments }) => {
   const [showComments, setShowComments] = useState(false);
   const [showAddComment, setShowAddComment] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -28,35 +29,36 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, image, comment
   const hasIncrementedView = useRef(false);
   const { token, isAdmin } = useContext(AuthContext);
   
-  // Reset the increment flag when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      hasIncrementedView.current = false;
+ // Reset the increment flag when modal opens. Also used for getting comments
+ useEffect(() => {
+  if (isOpen) {
+    hasIncrementedView.current = false;
+  }
+}, [isOpen]);
+
+const incrementViewCountAndFetchComments = async () => {
+  try {
+    await mediaService.incrementViewCount(image!.id);
+    const updatedImage = await mediaService.getById(image!.id);
+    if (setImages) {
+      setImages(prevImages => prevImages.map(img => img.id === image!.id ? updatedImage : img));
     }
-  }, [isOpen]);
-  
-  // Increment view count when modal opens
-  useEffect(() => {
-    if (isOpen && image && !hasIncrementedView.current) {
-      hasIncrementedView.current = true;
-      
-      // Update view count immediately in state
-      if (setImages) {
-        setImages(prevImages => 
-          prevImages.map(img => 
-            img.id === image.id 
-              ? { ...img, views: (img.views || 0) + 1 }
-              : img
-          )
-        );
-      }
-      
-      // Call API to persist the increment
-      mediaService.incrementViewCount(image.id).catch(error => {
-        console.error('Error incrementing view count:', error);
-      });
+    // On modal open, update comment sections so no need to refresh the page
+    const comments = await commentService.getByMediaId(image!.id);
+    if (setComments) {
+      setComments(comments);
     }
-  }, [isOpen, image, setImages]);
+  } catch (error) { 
+    console.error('Error incrementing view count and fetching comments:', error);
+  }
+}
+
+useEffect(() => {
+  if (isOpen && image && !hasIncrementedView.current) {
+    hasIncrementedView.current = true;
+    incrementViewCountAndFetchComments();
+  }
+}, [isOpen, image, setImages, setComments]);
   
   // Format upload time
   const formatUploadTime = (uploadedAt: string) => {

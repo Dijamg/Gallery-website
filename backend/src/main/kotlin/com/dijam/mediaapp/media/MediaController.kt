@@ -22,8 +22,7 @@ data class ErrorResponse(val error: String)
 @RestController
 @RequestMapping("/media")
 open class MediaController(
-    private val service: MediaService,
-    private val mediaService: MediaService,
+    private val service: MediaService
 ) {
 
     @GetMapping("/")
@@ -33,6 +32,16 @@ open class MediaController(
             ResponseEntity.ok(mediaList)
         } catch (e: Exception) {
             ResponseEntity.status(500).body(emptyList())
+        }
+    }
+
+    @GetMapping("/{id}")
+    open fun getById(@PathVariable id: Long): ResponseEntity<Media> {
+        return try {
+            val media = service.getById(id)
+            ResponseEntity.ok(media)
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(null)
         }
     }
 
@@ -60,6 +69,16 @@ open class MediaController(
     open fun getAllComments(): ResponseEntity<List<Comment>> {
         return try {
             val commentList = service.getAllComments()
+            ResponseEntity.ok(commentList)
+        } catch (e: Exception) {
+            ResponseEntity.status(500).body(emptyList())
+        }
+    }
+
+    @GetMapping("/comments/{id}")
+    open fun getCommentsByMediaId(@PathVariable id: Long): ResponseEntity<List<Comment>> {
+        return try {
+            val commentList = service.getComments(id)
             ResponseEntity.ok(commentList)
         } catch (e: Exception) {
             ResponseEntity.status(500).body(emptyList())
@@ -97,10 +116,10 @@ open class MediaController(
 
     @DeleteMapping("/comments/{id}/delete")
     fun deleteComment(@PathVariable id: Long): ResponseEntity<Any> {
-        val comment = mediaService.getCommentById(id) ?: return ResponseEntity.notFound().build()
+        val comment = service.getCommentById(id) ?: return ResponseEntity.notFound().build()
 
         // Delete from database
-        mediaService.deleteComment(id)
+        service.deleteComment(id)
 
         return ResponseEntity.noContent().build()
     }
@@ -148,7 +167,7 @@ open class MediaController(
 
     @DeleteMapping("/{id}/delete")
     fun deleteMedia(@PathVariable id: Long): ResponseEntity<Any> {
-        val media = mediaService.getById(id) ?: return ResponseEntity.notFound().build()
+        val media = service.getById(id) ?: return ResponseEntity.notFound().build()
 
         // remove the saved media file
         val uploadDir = Paths.get("uploads").toAbsolutePath()
@@ -160,7 +179,7 @@ open class MediaController(
         }
 
         // Delete from database
-        mediaService.deleteMedia(id)
+        service.deleteMedia(id)
 
         return ResponseEntity.noContent().build()
     }

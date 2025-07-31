@@ -49,6 +49,8 @@ flyway/sql/*.tmp
 # Ignore coverage if using tests
 coverage/
 
+uploads/
+
 # NGINX logs or temp config
 nginx/*.log
 nginx/*.tmp

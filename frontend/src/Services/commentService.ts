@@ -9,6 +9,11 @@ const getAll = async (): Promise<Comment[]> => {
   return response.data;
 };
 
+const getByMediaId = async (id: number): Promise<Comment[]> => {
+  const response = await axios.get<Comment[]>(`${API_URL}/comments/${id}`);
+  return response.data;
+};
+
 const addComment = async (id: number, formData: FormData): Promise<void> => {
   try {
    const response = await axios.post(`${API_URL}/${id}/upload-comment`, formData, {
@@ -29,4 +34,4 @@ const addComment = async (id: number, formData: FormData): Promise<void> => {
  };
 
 
-export default { getAll, addComment, deleteComment };
+export default { getAll, addComment, deleteComment, getByMediaId };

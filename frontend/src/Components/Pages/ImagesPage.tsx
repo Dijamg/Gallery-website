@@ -8,9 +8,10 @@ interface ImagesPageProps {
   comments: Comment[];
   fetchData: () => void;
   setImages: React.Dispatch<React.SetStateAction<MediaItem[]>>;
+  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
 }
 
-const ImagesPage = ({ images, comments, fetchData, setImages }: ImagesPageProps) => {
+const ImagesPage = ({ images, comments, fetchData, setImages, setComments }: ImagesPageProps) => {
   const [selectedImage, setSelectedImage] = useState<MediaItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -167,6 +168,7 @@ const ImagesPage = ({ images, comments, fetchData, setImages }: ImagesPageProps)
         onDelete={fetchData}
         onCommentAdded={fetchData}
         setImages={setImages}
+        setComments={setComments}
       />
     </div>
   );

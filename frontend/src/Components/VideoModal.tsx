@@ -12,12 +12,13 @@ interface VideoModalProps {
   comments: Comment[];
   onDelete?: () => void;
   onCommentAdded?: () => void;
-  setVideos?: React.Dispatch<React.SetStateAction<MediaItem[]>>; // To update view count immediately
+  setVideos?: React.Dispatch<React.SetStateAction<MediaItem[]>>; // To update view count immediately,
+  setComments?: React.Dispatch<React.SetStateAction<Comment[]>>; // To update comment section on each modal open
 }
 
 const API_BASE_URL = import.meta.env.VITE_MEDIA_API_BASE_URL;
 
-const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comments, onDelete, onCommentAdded, setVideos }) => {
+const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comments, onDelete, onCommentAdded, setVideos, setComments }) => {
   const [showComments, setShowComments] = useState(false);
   const [showAddComment, setShowAddComment] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -28,35 +29,36 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
   const hasIncrementedView = useRef(false);
   const { token, isAdmin } = useContext(AuthContext);
   
-  // Reset the increment flag when modal opens
+  // Reset the increment flag when modal opens. Also used for getting comments
   useEffect(() => {
     if (isOpen) {
       hasIncrementedView.current = false;
     }
   }, [isOpen]);
   
-  // Increment view count when modal opens
+  const incrementViewCountAndFetchComments = async () => {
+    try {
+      await mediaService.incrementViewCount(video!.id);
+      const updatedVideo = await mediaService.getById(video!.id);
+      if (setVideos) {
+        setVideos(prevVideos => prevVideos.map(vid => vid.id === video!.id ? updatedVideo : vid));
+      }
+      // On modal open, update comment sections so no need to refresh the page
+      const comments = await commentService.getByMediaId(video!.id);
+      if (setComments) {
+        setComments(comments);
+      }
+    } catch (error) { 
+      console.error('Error incrementing view count and fetching comments:', error);
+    }
+  }
+  
   useEffect(() => {
     if (isOpen && video && !hasIncrementedView.current) {
       hasIncrementedView.current = true;
-      
-      // Update view count immediately in state
-      if (setVideos) {
-        setVideos(prevVideos => 
-          prevVideos.map(vid => 
-            vid.id === video.id 
-              ? { ...vid, views: (vid.views || 0) + 1 }
-              : vid
-          )
-        );
-      }
-      
-      // Call API to persist the increment
-      mediaService.incrementViewCount(video.id).catch(error => {
-        console.error('Error incrementing view count:', error);
-      });
+      incrementViewCountAndFetchComments();
     }
-  }, [isOpen, video, setVideos]);
+  }, [isOpen, video, setVideos, setComments]);
   
   // Format upload time
   const formatUploadTime = (uploadedAt: string) => {

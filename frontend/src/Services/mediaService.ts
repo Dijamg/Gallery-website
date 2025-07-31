@@ -9,6 +9,11 @@ const getAll = async (): Promise<MediaItem[]> => {
   return response.data;
 };
 
+const getById = async (id: number): Promise<MediaItem> => {
+  const response = await axios.get<MediaItem>(`${API_URL}${id}`);
+  return response.data;
+};
+
 const getVideos = async (): Promise<MediaItem[]> => {
   const response = await axios.get<MediaItem[]>(`${API_URL}videos`);
   return response.data;
@@ -43,4 +48,4 @@ const incrementViewCount = async (id: number): Promise<void> => {
   await axios.patch(`${API_URL}${id}/increment-views`, { headers: authHeader() });
 };
 
-export default { getAll, getVideos, getImages, addMedia, deleteMedia, incrementViewCount };
+export default { getAll, getVideos, getImages, addMedia, deleteMedia, incrementViewCount, getById };
