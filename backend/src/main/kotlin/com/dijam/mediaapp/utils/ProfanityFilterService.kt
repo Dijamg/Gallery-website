@@ -13,9 +13,12 @@ class ProfanityFilterService {
         loadProfanityWords()
     }
 
+    val suffixes = listOf("s", "z", "x", "ed", "ing", "er", "rs")
+
     fun containsProfanity(text: String): Boolean {
         return profaneWords.any { word ->
-            Regex("\\b${Regex.escape(word)}\\b", RegexOption.IGNORE_CASE).containsMatchIn(text)
+            val pattern = Regex("${Regex.escape(word)}(?:${suffixes.joinToString("|")})?", RegexOption.IGNORE_CASE)
+            pattern.containsMatchIn(text)
         }
     }
 

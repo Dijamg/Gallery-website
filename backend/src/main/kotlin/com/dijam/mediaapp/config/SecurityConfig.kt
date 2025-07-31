@@ -32,9 +32,27 @@ class SecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/gallery/assets/**").permitAll()
-                    .requestMatchers("/gallery/api/authentication/pingadmin", "/gallery/api/media/upload", "/gallery/api/media/*/delete", "/gallery/api/media/comments/*/delete").hasRole("ADMIN")
-                    .requestMatchers("/gallery/api/authentication/pingauth", "/gallery/api/media/*/upload-comment").authenticated()
+                    //Contains both prod and dev endpoints.
+                    .requestMatchers(
+                        "/gallery/assets/**",
+                        "/assets/**"
+                    ).permitAll()
+                    .requestMatchers(
+                        "/gallery/api/authentication/pingadmin",
+                        "/gallery/api/media/upload",
+                        "/gallery/api/media/*/delete",
+                        "/gallery/api/media/comments/*/delete",
+                        "/authentication/pingadmin",
+                        "/media/upload",
+                        "/media/*/delete",
+                        "/media/comments/*/delete"
+                    ).hasRole("ADMIN")
+                    .requestMatchers(
+                        "/gallery/api/authentication/pingauth",
+                        "/gallery/api/media/*/upload-comment",
+                        "/authentication/pingauth",
+                        "/media/*/upload-comment"
+                    ).authenticated()
                     .anyRequest().permitAll()
             }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
