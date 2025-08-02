@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ImageCard from '../ImageCard';
 import ImageModal from '../ImageModal';
 import { MediaItem, Comment } from '../../types';
@@ -16,16 +16,37 @@ const ImagesPage = ({ images, comments, fetchData, setImages, setComments }: Ima
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPaginationLoading, setIsPaginationLoading] = useState(false);
+  const hasCompletedInitialLoad = useRef(false);
+  const isFirstRender = useRef(true);
   const itemsPerPage = 6;
 
   // Handle loading delay on component mount
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 750); // 0.75 seconds
+      hasCompletedInitialLoad.current = true;
+    }, 750); 
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Handle loading delay when changing pages (only after initial load is complete)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return; // Skip the first render
+    }
+
+    if (hasCompletedInitialLoad.current) {
+      setIsPaginationLoading(true);
+      const timer = setTimeout(() => {
+        setIsPaginationLoading(false);
+      }, 750);
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentPage]);
 
   // Loading spinner component
   const LoadingSpinner = () => (
@@ -114,7 +135,7 @@ const ImagesPage = ({ images, comments, fetchData, setImages, setComments }: Ima
     return [currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
   };
 
-  if (isLoading) {
+  if (isLoading || isPaginationLoading) {
     return <LoadingSpinner />;
   }
 
