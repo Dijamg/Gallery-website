@@ -4,7 +4,7 @@ import { useCookies } from "./useCookies";
 
 export const useToken = () => {
     const { token: contextToken, setToken, isAdmin: contextIsAdmin, setIsAdmin } = useContext(AuthContext);
-    const { setItem, removeItem } = useCookies();
+    const { setItem, removeItem, removeItemFromAllPaths } = useCookies();
 
     const addToken = (token: string) => {
         setToken(token);
@@ -22,14 +22,15 @@ export const useToken = () => {
 
     const removeIsAdmin = () => {
         setIsAdmin(false);
-        removeItem("IS_ADMIN");
+        removeItemFromAllPaths("IS_ADMIN");
     }
 
     const removeToken = () => {
         setToken(null);
-        removeItem("TOKEN");
-        removeItem("USERNAME");
-        removeItem("IS_ADMIN");
+        // logout from everywhere
+        removeItemFromAllPaths("TOKEN");
+        removeItemFromAllPaths("USERNAME");
+        removeItemFromAllPaths("IS_ADMIN");
     };
 
     return { contextToken, addToken, addUsername, addIsAdmin, removeToken, setToken, removeIsAdmin };

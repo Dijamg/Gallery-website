@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ImageCard from '../ImageCard';
 import ImageModal from '../ImageModal';
 import { MediaItem, Comment } from '../../types';
@@ -15,7 +15,27 @@ const ImagesPage = ({ images, comments, fetchData, setImages, setComments }: Ima
   const [selectedImage, setSelectedImage] = useState<MediaItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 6;
+
+  // Handle loading delay on component mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 750); // 0.75 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Loading spinner component
+  const LoadingSpinner = () => (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-white mb-4">Images</h1>
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+      </div>
+    </div>
+  );
 
   const handleImageClick = (image: MediaItem) => {
     const mediaItem = images.find(i => i.id === image.id);
@@ -93,6 +113,10 @@ const ImagesPage = ({ images, comments, fetchData, setImages, setComments }: Ima
 
     return [currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="p-6">

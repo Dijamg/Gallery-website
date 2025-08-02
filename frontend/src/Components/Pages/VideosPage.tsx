@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import VideoCard from '../VideoCard';
 import VideoModal from '../VideoModal';
 import { MediaItem, Comment } from '../../types';
@@ -15,7 +15,27 @@ const VideosPage = ({ videos, comments, fetchData, setVideos, setComments }: Vid
   const [selectedVideo, setSelectedVideo] = useState<MediaItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 6;
+
+  // Handle loading delay on component mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 750); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Loading spinner component
+  const LoadingSpinner = () => (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-white mb-4">Videos</h1>
+      <div className="flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+      </div>
+    </div>
+  );
 
   const handleVideoClick = (video: MediaItem) => {
     const mediaItem = videos.find(v => v.id === video.id);
@@ -94,6 +114,10 @@ const VideosPage = ({ videos, comments, fetchData, setVideos, setComments }: Vid
 
     return [currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="p-6">
