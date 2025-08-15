@@ -61,7 +61,7 @@ This gallery uses **shared authentication** with the main TPX Discord website. U
    ```bash
    docker-compose up -d
    ```
-   
+
 ### Local Development
 
 1. **Frontend Development**
@@ -79,26 +79,8 @@ This gallery uses **shared authentication** with the main TPX Discord website. U
 
 ## 🔧 Configuration
 
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Database
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=media_app
-DB_USER=postgres
-DB_PASSWORD=password
-
-# JWT
-JWT_SECRET=your-secret-key
-JWT_EXPIRATION=86400000
-
-# File Upload
-UPLOAD_DIR=./uploads
-MAX_FILE_SIZE=100MB
-```
+ **Configure environment variables:**
+   - Copy `project.env.example` to `project.env` in root and `.env.example` to `.env` in frontend folder and fill in the required values (API keys, database URLs, etc).
 
 ## 📦 Deployment
 
