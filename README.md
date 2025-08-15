@@ -61,11 +61,7 @@ This gallery uses **shared authentication** with the main TPX Discord website. U
    ```bash
    docker-compose up -d
    ```
-
-3. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8080
-
+   
 ### Local Development
 
 1. **Frontend Development**
