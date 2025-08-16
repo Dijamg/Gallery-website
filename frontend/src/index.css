@@ -3,3 +3,23 @@
 body {
   font-family: 'Oswald', sans-serif;
 }
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: #0A192F;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #5a6b87;
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #5a6b87;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #5a6b87 #0A192F;
+}
