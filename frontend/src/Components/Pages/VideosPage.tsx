@@ -166,8 +166,7 @@ const VideosPage = ({ videos, comments, fetchData, setVideos, setComments }: Vid
         onClose={handleCloseModal}
         video={selectedVideo}
         comments={comments}
-        onDelete={fetchData}
-        onCommentAdded={fetchData}
+        onStateChange={fetchData}
         setVideos={setVideos}
         setComments={setComments}
       />

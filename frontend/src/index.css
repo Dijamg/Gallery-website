@@ -9,7 +9,7 @@ body {
   height: 6px;
 }
 *::-webkit-scrollbar-track {
-  background: #0A192F;
+  background: black;
 }
 *::-webkit-scrollbar-thumb {
   background-color: #5a6b87;
@@ -21,5 +21,5 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #5a6b87 #0A192F;
+  scrollbar-color: #5a6b87 black;
 }

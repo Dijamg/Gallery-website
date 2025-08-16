@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="flex space-x-6 mb-4">
           {/* Discord Icon */}
           <span
-            className="transition-colors duration-200 text-white hover:text-purple-400 cursor-pointer"
+            className="transition-colors duration-200 text-white hover:text-purple-500 cursor-pointer"
             aria-label="Discord"
           >
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -19,7 +19,7 @@ const Footer = () => {
             href="https://github.com/Dijamg/Gallery-website/" 
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors duration-200 text-white hover:text-purple-400"
+            className="transition-colors duration-200 text-white hover:text-purple-500"
             aria-label="GitHub"
           >
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">

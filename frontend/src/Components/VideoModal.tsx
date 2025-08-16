@@ -10,15 +10,14 @@ interface VideoModalProps {
   onClose: () => void;
   video: MediaItem | null;
   comments: Comment[];
-  onDelete?: () => void;
-  onCommentAdded?: () => void;
+  onStateChange?: () => void; // Callback to refresh states
   setVideos?: React.Dispatch<React.SetStateAction<MediaItem[]>>; // To update view count immediately,
   setComments?: React.Dispatch<React.SetStateAction<Comment[]>>; // To update comment section on each modal open
 }
 
 const API_BASE_URL = import.meta.env.VITE_MEDIA_API_BASE_URL;
 
-const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comments, onDelete, onCommentAdded, setVideos, setComments }) => {
+const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comments, onStateChange, setVideos, setComments }) => {
   const [showComments, setShowComments] = useState(false);
   const [showAddComment, setShowAddComment] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -118,11 +117,9 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
         setNewComment('');
         setShowAddComment(false);
         setCommentError('');
-        if(onDelete) {
-          onDelete();
-        }
-        if(onCommentAdded) {
-          onCommentAdded();
+        // Call the onCommentAdded callback to refresh the comment section
+        if(onStateChange) {
+          onStateChange();
         }
       } catch (error: any) {
         console.error('Error adding comment:', error);
@@ -153,8 +150,8 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
         console.log('Video deleted successfully');
         onClose();
         // Call the onDelete callback to refresh the media list
-        if (onDelete) {
-          onDelete();
+        if (onStateChange) {
+          onStateChange();
         }
       } catch (error) {
         console.error('Error deleting video:', error);
@@ -173,8 +170,8 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
         setDeletingCommentId(commentId);
         await commentService.deleteComment(commentId);
         console.log('Comment deleted successfully');
-        if (onCommentAdded) {
-          onCommentAdded();
+        if (onStateChange) {
+          onStateChange();
         }
       } catch (error) {
         console.error('Error deleting comment:', error);
@@ -190,7 +187,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
       className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-start justify-center z-50 p-4 overflow-y-auto"
       onClick={handleBackdropClick}
     >
-      <div className="relative w-full max-w-6xl mx-4 my-8">
+      <div className="relative w-full max-w-6xl mx-4 my-8 border border-gray-800 rounded-lg">
         {/* Title and close button row */}
         <div className="sticky top-0 flex justify-between items-center bg-black p-4 rounded-t-lg z-10">
           <div className="flex items-center space-x-4">
@@ -223,13 +220,15 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
         {/* Video container */}
         <div className="relative bg-gray-950 rounded-b-lg overflow-hidden">
           {/* Video player */}
-          <video
-            className="w-full h-auto max-h-[80vh]"
-            src={`${API_BASE_URL}${video.url}`}
-            controls
-            autoPlay
-            muted={false}
-          />
+          <div className="p-2">
+            <video
+              className="w-full h-auto max-h-[80vh] border border-gray-700 rounded"
+              src={`${API_BASE_URL}${video.url}`}
+              controls
+              autoPlay
+              muted={false}
+            />
+          </div>
           
           {/* Description, Comments, Likes etc*/}
           <div className="p-4 bg-black">

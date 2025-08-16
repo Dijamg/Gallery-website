@@ -210,8 +210,7 @@ const ImagesPage = ({ images, comments, fetchData, setImages, setComments }: Ima
         onClose={handleCloseModal}
         image={selectedImage}
         comments={comments}
-        onDelete={fetchData}
-        onCommentAdded={fetchData}
+        onStateChange={fetchData}
         setImages={setImages}
         setComments={setComments}
       />

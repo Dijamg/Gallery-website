@@ -50,7 +50,7 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
         <Link 
           to="/videos" 
           className={`mb-10 cursor-pointer flex flex-col items-center transition-colors duration-200 ${
-            isActive('/videos') ? 'text-purple-400' : 'text-white hover:text-purple-400'
+            isActive('/videos') ? 'text-purple-500' : 'text-white hover:text-purple-500'
           }`}
         >
           <svg className="w-6 h-6 mb-2" fill="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
         <Link 
           to="/images" 
           className={`mb-10 cursor-pointer flex flex-col items-center transition-colors duration-200 ${
-            isActive('/images') ? 'text-purple-400' : 'text-white hover:text-purple-400'
+            isActive('/images') ? 'text-purple-500' : 'text-white hover:text-purple-500'
           }`}
         >
           <svg className="w-6 h-6 mb-2" fill="currentColor" viewBox="0 0 24 24">
@@ -74,7 +74,7 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
         <Link 
           to="/other" 
           className={`mb-10 cursor-pointer flex flex-col items-center transition-colors duration-200 ${
-            isActive('/other') ? 'text-purple-400' : 'text-white hover:text-purple-400'
+            isActive('/other') ? 'text-purple-500' : 'text-white hover:text-purple-500'
           }`}
         >
           <svg className="w-6 h-6 mb-2" fill="currentColor" viewBox="0 0 24 24">
@@ -85,7 +85,7 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
         
         <a 
           href="/" 
-          className="mb-10 cursor-pointer flex flex-col items-center transition-colors duration-200 text-white hover:text-purple-400"
+          className="mb-10 cursor-pointer flex flex-col items-center transition-colors duration-200 text-white hover:text-purple-500"
         >
           <svg className="w-6 h-6 mb-2" fill="currentColor" viewBox="0 0 24 24">
             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
@@ -95,7 +95,7 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
       </div>
 
       {/* Top Right Logo and Title */}
-      <div className="fixed top-4 left-24 z-50 flex items-center space-x-4">
+      <div className="absolute top-4 left-24 z-50 flex items-center space-x-4">
         <img 
           src="/assets/tpx_logo.webp" 
           alt="TPX Logo" 
@@ -105,20 +105,19 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
       </div>
 
       {/* Top Right Buttons */}
-      <div className="fixed top-4 right-4 z-50 flex items-center space-x-3">
-        {/* Add Button - Only visible to authenticated admins */}
-        {token && isAdmin && (
-          <button
-            onClick={() => setUploadModalOpen(true)}
-            className="flex items-center justify-center px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white transition-colors duration-200 cursor-pointer"
-            aria-label="Add"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            <span className="text-sm font-medium">Add</span>
-          </button>
-        )}
+      <div className="absolute top-4 right-4 z-50 flex items-center space-x-3">
+    {/* Add Button - Only visible to authenticated admins */}
+          {token && isAdmin && (
+            <button
+              onClick={() => setUploadModalOpen(true)}
+              className="flex items-center justify-center p-3 text-purple-500 hover:text-purple-300 transition-colors duration-200 cursor-pointer"
+              aria-label="Add"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
+          )}
 
         {/* Login/Logout Button */}
         <div className="relative">
@@ -130,7 +129,7 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
                 className="flex items-center justify-center p-3 group transition-colors duration-200 cursor-pointer"
                 aria-label="User menu"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} className="w-6 h-6 transition-colors duration-200 stroke-purple-400 group-hover:stroke-purple-300" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} className="w-6 h-6 transition-colors duration-200 stroke-purple-500 group-hover:stroke-purple-300" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
               </button>
@@ -160,7 +159,7 @@ const Layout = ({ fetchData }: { fetchData: () => void }) => {
                 className="flex items-center justify-center p-3 group transition-colors duration-200 cursor-pointer"
                 aria-label="Login"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} className="w-6 h-6 transition-colors duration-200 stroke-white group-hover:stroke-purple-400" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} className="w-6 h-6 transition-colors duration-200 stroke-white group-hover:stroke-purple-500" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M18 15l3-3m0 0l-3-3m3 3H9" />
                 </svg>
               </button>
