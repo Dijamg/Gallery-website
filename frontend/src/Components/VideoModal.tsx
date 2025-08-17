@@ -25,6 +25,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState('');
   const [deletingCommentId, setDeletingCommentId] = useState<number | null>(null);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
   const hasIncrementedView = useRef(false);
   const { token, isAdmin } = useContext(AuthContext);
   
@@ -96,6 +97,14 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
   };
 
   const handleAddCommentClick = () => {
+    if (!token) {
+      // Show login popup for non-logged-in users
+      setShowLoginPopup(true);
+      // Hide popup after 3 seconds
+      setTimeout(() => setShowLoginPopup(false), 3000);
+      return;
+    }
+    
     setShowAddComment(!showAddComment);
     if (showAddComment) {
       // When closing, clear error and comment
@@ -248,6 +257,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
                 >
                   {videoComments.length} comments
                 </span>
+                {/* Add Comment Button*/}
                 {token && (
                   <button
                     onClick={handleAddCommentClick}
@@ -260,9 +270,26 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, video, comment
                     {showAddComment ? "- close" : "+ add comment"}
                   </button>
                 )}
+                {/* Add Comment Button, but for non-logged in users, show login popup which asks to login */}
+                {!token && (
+                  <div className="relative">
+                    <button
+                      onClick={handleAddCommentClick}
+                      className="cursor-pointer transition-colors duration-200 text-xs text-blue-400 hover:text-blue-300"
+                    >
+                      + add comment
+                    </button>
+                    {showLoginPopup && (
+                      <div className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-nowrap z-20">
+                        Please log in to comment
+                        <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Add Comment Section */}
+              {/* comment addition field */}
               {showAddComment && (
                 <div className="mt-4 p-3 bg-gray-900 rounded-lg">
                   <div className="flex space-x-2">
